@@ -98,11 +98,41 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
           targetDurationMinutes: targetDuration,
           hookStatement: data.hookStatement || '',
           fullScript: data.fullScript || '',
+          ideaBrief: idea,
+          scriptDraft: {
+            version: 1,
+            status: 'final',
+            sections: (data.scenes || []).map((scene: Scene) => ({
+              id: `scene-${scene.sceneNumber}`,
+              heading: scene.title,
+              purpose: scene.visualDescription || scene.title,
+              narration: scene.narrationText || '',
+              estimatedSeconds: scene.durationSeconds || 0
+            })),
+            wordCount: (data.fullScript || '').trim().split(/\s+/).filter(Boolean).length,
+            estimatedDurationSeconds: (data.scenes || []).reduce((sum: number, scene: Scene) => sum + (scene.durationSeconds || 0), 0),
+            notes: 'Generated from the approved Idea Brief.'
+          },
           scenes: data.scenes,
           thumbnailPrompt: data.thumbnailPrompt || '',
           thumbnailUrl: data.scenes[0]?.imageUrl,
           seo: data.seo,
-          status: 'scripted'
+          status: 'scripted',
+          production: {
+            currentStage: 'storyboard',
+            completedStages: ['idea', 'research', 'scripting'],
+            ideaBrief: idea,
+            scriptDraft: {
+              version: 1,
+              status: 'final',
+              sections: (data.scenes || []).map((scene: Scene) => ({ id: `scene-${scene.sceneNumber}`, heading: scene.title, purpose: scene.visualDescription || scene.title, narration: scene.narrationText || '', estimatedSeconds: scene.durationSeconds || 0 })),
+              wordCount: (data.fullScript || '').trim().split(/\s+/).filter(Boolean).length,
+              estimatedDurationSeconds: (data.scenes || []).reduce((sum: number, scene: Scene) => sum + (scene.durationSeconds || 0), 0)
+            },
+            audioTracks: [],
+            timeline: [],
+            renderStatus: 'idle'
+          }
         });
         // advance to next stage smoothly
         setActiveStep(3);
@@ -303,8 +333,8 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
         </div>
       )}
 
-      {/* STEP 1: AI Scriptwriter */}
-      {activeStep === 8 && (
+      {/* STEP 2: AI Scriptwriter */}
+      {activeStep === 2 && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <div>
@@ -496,8 +526,8 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
         </div>
       )}
 
-      {/* STEP 2: Consistent Character Bible */}
-      {activeStep === 2 && (
+      {/* STEP 4: Consistent Character Bible */}
+      {activeStep === 4 && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-6 text-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <div>
@@ -606,7 +636,7 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
 
           <div className="flex justify-end">
             <button
-              onClick={() => setActiveStep(4)}
+              onClick={() => setActiveStep(5)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs"
             >
               <span>Continue to Visuals</span>
@@ -656,6 +686,14 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
           onBatchGenerateVisuals={handleBatchGenerateVisuals}
           isBatchGenerating={isBatchVisualizing}
         />
+      )}
+
+      {activeStep === 3 && (
+        <div className="flex justify-end -mt-5">
+          <button onClick={() => setActiveStep(4)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs">
+            Continue to Characters <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       )}
 
       {/* STEP 5B: Visuals */}
@@ -734,8 +772,8 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
         </div>
       )}
 
-      {/* STEP 4: Audio Narration & Voice Actor */}
-      {activeStep === 4 && (
+      {/* AUDIO: Voice Actor (part of Combination) */}
+      {activeStep === 7 && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-6 text-xs">
           <div className="border-b border-slate-800 pb-4">
             <h2 className="text-base font-bold text-white flex items-center gap-2">
