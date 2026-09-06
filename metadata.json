@@ -1,0 +1,7 @@
+{
+  "name": "YouTube Automation Studio",
+  "description": "Professional YouTube content automation pipeline with multi-model AI scripting (ChatGPT, DeepSeek, Gemini), consistent character design, Google Flow visuals, audio narration, and scheduled YouTube uploads.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
