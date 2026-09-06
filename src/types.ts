@@ -10,6 +10,69 @@ export type ScriptTone =
 
 export type VideoFormat = '16:9' | '9:16';
 
+export type ProductionStage =
+  | 'idea' | 'research' | 'scripting' | 'storyboard' | 'characters'
+  | 'visuals' | 'animation' | 'combination' | 'video' | 'publish';
+
+export interface IdeaBrief {
+  concept: string;
+  audience: string;
+  objective: string;
+  hook: string;
+  references: string[];
+  titleIdeas: string[];
+  selectedTitle?: string;
+}
+
+export interface ScriptSection {
+  id: string;
+  heading: string;
+  purpose: string;
+  narration: string;
+  estimatedSeconds: number;
+}
+
+export interface ScriptDraft {
+  version: number;
+  status: 'outline' | 'draft' | 'review' | 'final';
+  sections: ScriptSection[];
+  wordCount: number;
+  estimatedDurationSeconds: number;
+  notes?: string;
+}
+
+export interface AudioTrack {
+  id: string;
+  type: 'voice' | 'music' | 'sfx';
+  name: string;
+  url?: string;
+  startSeconds: number;
+  durationSeconds: number;
+  volume: number;
+}
+
+export interface TimelineItem {
+  id: string;
+  sceneNumber: number;
+  startSeconds: number;
+  durationSeconds: number;
+  visualUrl?: string;
+  audioTrackIds: string[];
+  transition?: string;
+}
+
+export interface ProductionState {
+  currentStage: ProductionStage;
+  completedStages: ProductionStage[];
+  idea?: IdeaBrief;
+  script?: ScriptDraft;
+  selectedVoice?: string;
+  audioTracks: AudioTrack[];
+  timeline: TimelineItem[];
+  renderStatus: 'idle' | 'rendering' | 'ready' | 'error';
+  renderUrl?: string;
+}
+
 export interface CharacterProfile {
   id: string;
   name: string;
@@ -67,6 +130,10 @@ export interface VideoProject {
   targetDurationMinutes: number;
   hookStatement: string;
   fullScript: string;
+  ideaBrief?: IdeaBrief;
+  researchNotes?: string[];
+  scriptDraft?: ScriptDraft;
+  production?: ProductionState;
   scenes: Scene[];
   thumbnailPrompt: string;
   thumbnailUrl?: string;
