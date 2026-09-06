@@ -659,7 +659,7 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
       )}
 
       {/* STEP 5B: Visuals */}
-      {activeStep === 5.5 && (
+      {activeStep === 5 && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
           <h2 className="text-base font-bold text-white">Visual Asset Studio</h2>
           <p className="text-xs text-slate-400 mt-1">Generate and review visual assets for all storyboard scenes.</p>
@@ -843,28 +843,6 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
               <p className="text-xs text-slate-400 mt-1">Preview the assembled production before sending it to YouTube.</p>
             </div>
             <button onClick={() => setActiveStep(9)} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs">Continue to Publish <ArrowRight className="w-4 h-4" /></button>
-          </div>
-        </div>
-      )}
-
-      {/* STEP 5: Assembly Player */}
-      {activeStep === 5 && (
-        <div className="space-y-6">
-          <VideoPlayerPreview
-            scenes={project.scenes}
-            format={project.format}
-            character={activeCharacter}
-            activeVoice={selectedVoice}
-          />
-
-          <div className="flex justify-end">
-            <button
-              onClick={() => setActiveStep(9)}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-600/30"
-            >
-              <span>Ready for YouTube Upload</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
           </div>
         </div>
       )}
