@@ -59,6 +59,14 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
   const [tone, setTone] = useState<ScriptTone>(project.tone || 'educational');
   const [targetDuration, setTargetDuration] = useState<number>(project.targetDurationMinutes || 2);
   const [selectedVoice, setSelectedVoice] = useState(channel.defaultVoice || 'Kore');
+  const [idea, setIdea] = useState(project.ideaBrief || {
+    concept: project.topic || '',
+    audience: 'YouTube audience',
+    objective: 'Educate and retain viewers',
+    hook: project.hookStatement || '',
+    references: [],
+    titleIdeas: []
+  });
 
   const activeCharacter = characters.find((c) => c.id === project.characterId) || characters[0];
 
@@ -97,7 +105,7 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
           status: 'scripted'
         });
         // advance to next stage smoothly
-        setActiveStep(2);
+        setActiveStep(3);
       }
     } catch (e) {
       console.error(e);
@@ -160,12 +168,15 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
   };
 
   const steps = [
-    { id: 1, label: 'AI Scriptwriter', icon: Bot, desc: 'Multi-Model (ChatGPT/DeepSeek)' },
-    { id: 2, label: 'Consistent Character', icon: Users, desc: 'Locked Anchor Seeds' },
-    { id: 3, label: 'Google Flow Storyboard', icon: Film, desc: 'Scene Prompts & Renders' },
-    { id: 4, label: 'Audio Narration', icon: Volume2, desc: 'Natural TTS Voices' },
-    { id: 5, label: 'Assembly Player', icon: PlayCircle, desc: 'Cinematic Preview' },
-    { id: 6, label: 'YouTube Publish', icon: Upload, desc: 'SEO & Automated Push' }
+    { id: 1, label: 'Idea', icon: Sparkles, desc: 'Concept, audience & hook' },
+    { id: 2, label: 'Scripting', icon: Bot, desc: 'Research, outline & script' },
+    { id: 3, label: 'Storyboard', icon: Film, desc: 'Scene-by-scene planning' },
+    { id: 4, label: 'Characters', icon: Users, desc: 'Character Bible & consistency' },
+    { id: 5, label: 'Visuals', icon: Layers, desc: 'Images, backgrounds & assets' },
+    { id: 6, label: 'Animation', icon: Wand2, desc: 'Motion & camera direction' },
+    { id: 7, label: 'Combination', icon: Radio, desc: 'Timeline, audio & editing' },
+    { id: 8, label: 'Video', icon: PlayCircle, desc: 'Preview & final render' },
+    { id: 9, label: 'Publish', icon: Upload, desc: 'SEO & YouTube delivery' }
   ];
 
   return (
@@ -218,8 +229,82 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
         </div>
       </div>
 
-      {/* STEP 1: AI Scriptwriter */}
+      {/* STEP 1: Idea Studio */}
       {activeStep === 1 && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-6">
+          <div className="border-b border-slate-800 pb-4">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-red-500" />
+              Idea & Concept Studio
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Define the concept before the script is generated. This brief becomes the source of truth for the production pipeline.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1">Video Concept *</label>
+              <textarea
+                rows={5}
+                value={idea.concept}
+                onChange={(e) => setIdea({ ...idea, concept: e.target.value })}
+                placeholder="What is this video about?"
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-red-500"
+              />
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Target Audience</label>
+                <input
+                  value={idea.audience}
+                  onChange={(e) => setIdea({ ...idea, audience: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Video Objective</label>
+                <input
+                  value={idea.objective}
+                  onChange={(e) => setIdea({ ...idea, objective: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Hook / Core Promise</label>
+                <input
+                  value={idea.hook}
+                  onChange={(e) => setIdea({ ...idea, hook: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-red-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <button
+              disabled={!idea.concept.trim()}
+              onClick={() => {
+                onUpdateProject({
+                  topic: idea.concept,
+                  hookStatement: idea.hook,
+                  ideaBrief: idea,
+                  status: 'draft'
+                });
+                setTopicInput(idea.concept);
+                setActiveStep(2);
+              }}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs disabled:opacity-50"
+            >
+              Continue to Scripting
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 1: AI Scriptwriter */}
+      {activeStep === 8 && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <div>
@@ -521,10 +606,10 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
 
           <div className="flex justify-end">
             <button
-              onClick={() => setActiveStep(3)}
+              onClick={() => setActiveStep(4)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs"
             >
-              <span>Continue to Storyboard</span>
+              <span>Continue to Visuals</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -571,6 +656,82 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
           onBatchGenerateVisuals={handleBatchGenerateVisuals}
           isBatchGenerating={isBatchVisualizing}
         />
+      )}
+
+      {/* STEP 5B: Visuals */}
+      {activeStep === 5.5 && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <h2 className="text-base font-bold text-white">Visual Asset Studio</h2>
+          <p className="text-xs text-slate-400 mt-1">Generate and review visual assets for all storyboard scenes.</p>
+          <button onClick={handleBatchGenerateVisuals} disabled={isBatchVisualizing || !project.scenes.length} className="mt-5 px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs disabled:opacity-50">
+            {isBatchVisualizing ? 'Generating Visuals…' : 'Generate All Scene Visuals'}
+          </button>
+          <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3">
+            {project.scenes.map(scene => (
+              <div key={scene.sceneNumber} className="rounded-xl overflow-hidden border border-slate-700 bg-slate-800">
+                {scene.imageUrl ? <img src={scene.imageUrl} alt={scene.title} className="w-full aspect-video object-cover" /> : <div className="aspect-video flex items-center justify-center text-slate-500">No visual</div>}
+                <div className="p-2 text-[10px] text-slate-300">Scene {scene.sceneNumber}</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end mt-5"><button onClick={() => setActiveStep(6)} className="px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs">Continue to Animation <ArrowRight className="w-4 h-4 inline ml-1" /></button></div>
+        </div>
+      )}
+
+      {/* STEP 6: Animation */}
+      {activeStep === 6 && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-6 text-xs">
+          <div className="border-b border-slate-800 pb-4">
+            <h2 className="text-base font-bold text-white flex items-center gap-2"><Wand2 className="w-5 h-5 text-red-500" />Animation Studio</h2>
+            <p className="text-slate-400 mt-1">Review motion prompts, camera movement and animation direction for every storyboard scene.</p>
+          </div>
+          <div className="space-y-3">
+            {project.scenes.map((scene) => (
+              <div key={scene.sceneNumber} className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <span className="font-bold text-white">Scene {scene.sceneNumber}: {scene.title}</span>
+                  <span className="text-[10px] text-slate-400">{scene.durationSeconds}s</span>
+                </div>
+                <textarea
+                  rows={2}
+                  value={scene.veoMotionPrompt}
+                  onChange={(e) => {
+                    const scenes = [...project.scenes];
+                    const idx = scenes.findIndex(s => s.sceneNumber === scene.sceneNumber);
+                    if (idx >= 0) scenes[idx] = { ...scenes[idx], veoMotionPrompt: e.target.value };
+                    onUpdateProject({ scenes });
+                  }}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white text-xs focus:outline-none focus:border-red-500"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end">
+            <button onClick={() => setActiveStep(7)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs">Continue to Combination <ArrowRight className="w-4 h-4" /></button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 7: Combination / Editing */}
+      {activeStep === 7 && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-6 text-xs">
+          <div className="border-b border-slate-800 pb-4">
+            <h2 className="text-base font-bold text-white flex items-center gap-2"><Radio className="w-5 h-5 text-red-500" />Combination & Timeline</h2>
+            <p className="text-slate-400 mt-1">Assemble scenes, narration, music and effects into one production timeline.</p>
+          </div>
+          <div className="space-y-2">
+            {project.scenes.map((scene, index) => (
+              <div key={scene.sceneNumber} className="grid grid-cols-[80px_1fr_100px] gap-3 items-center p-3 rounded-lg bg-slate-800/50 border border-slate-700/60">
+                <span className="font-bold text-slate-300">Scene {scene.sceneNumber}</span>
+                <div className="h-8 rounded bg-slate-700/60 flex items-center px-3 text-slate-300 truncate">{scene.title} · {scene.narrationText}</div>
+                <span className="text-right text-slate-400">{scene.durationSeconds}s</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end">
+            <button onClick={() => setActiveStep(8)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs">Open Video Preview <ArrowRight className="w-4 h-4" /></button>
+          </div>
+        </div>
       )}
 
       {/* STEP 4: Audio Narration & Voice Actor */}
@@ -657,12 +818,31 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
 
           <div className="flex justify-end pt-4 border-t border-slate-800">
             <button
-              onClick={() => setActiveStep(5)}
+              onClick={() => setActiveStep(7)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs"
             >
               <span>Proceed to Assembly Player</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 8: Video */}
+      {activeStep === 8 && (
+        <div className="space-y-6">
+          <VideoPlayerPreview
+            scenes={project.scenes}
+            format={project.format}
+            character={activeCharacter}
+            activeVoice={selectedVoice}
+          />
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-bold text-white">Final video package</p>
+              <p className="text-xs text-slate-400 mt-1">Preview the assembled production before sending it to YouTube.</p>
+            </div>
+            <button onClick={() => setActiveStep(9)} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs">Continue to Publish <ArrowRight className="w-4 h-4" /></button>
           </div>
         </div>
       )}
@@ -679,7 +859,7 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
 
           <div className="flex justify-end">
             <button
-              onClick={() => setActiveStep(6)}
+              onClick={() => setActiveStep(9)}
               className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-600/30"
             >
               <span>Ready for YouTube Upload</span>
@@ -690,7 +870,7 @@ export const PipelineWizard: React.FC<PipelineWizardProps> = ({
       )}
 
       {/* STEP 6: YouTube Publish */}
-      {activeStep === 6 && (
+      {activeStep === 9 && (
         <YouTubePublisher
           project={project}
           channel={channel}
